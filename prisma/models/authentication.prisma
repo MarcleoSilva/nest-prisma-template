@@ -1,0 +1,42 @@
+model RefreshToken {
+    id String @id @default(uuid()) @db.Uuid
+    jti String @unique
+    token String @unique
+
+    userId String @db.Uuid
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    expiresAt DateTime
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId])
+}
+
+model EmailVerification {
+    id String @id @default(uuid()) @db.Uuid
+    userId String @unique @db.Uuid
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    codeHash String
+
+    failedAttempts Int @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    lastSentAt DateTime @default(now())
+    resendCount Int @default(0)
+
+    expiresAt DateTime
+}
+
+model PasswordReset {
+    id String @id @default(uuid()) @db.Uuid
+    userId String @unique @db.Uuid
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    token String @unique
+    createdAt DateTime @default(now())
+
+    expiresAt DateTime
+}
